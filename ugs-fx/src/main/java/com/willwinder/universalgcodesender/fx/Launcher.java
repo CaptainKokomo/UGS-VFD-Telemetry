@@ -35,6 +35,7 @@ import java.time.Instant;
  */
 public class Launcher {
     public static void main(String[] args) throws IOException {
+        configurePortableHome();
         Thread.setDefaultUncaughtExceptionHandler((thread, error) -> reportStartupFailure(error));
 
         try {
@@ -49,12 +50,29 @@ public class Launcher {
         }
     }
 
+    private static void configurePortableHome() throws IOException {
+        if (!Boolean.getBoolean("ugs.portable")) {
+            return;
+        }
+
+        String appPathProperty = System.getProperty("jpackage.app-path");
+        Path applicationFolder = appPathProperty == null
+                ? Path.of(".").toAbsolutePath().normalize()
+                : Path.of(appPathProperty).toAbsolutePath().getParent();
+        Path dataFolder = applicationFolder.resolve("data");
+        Files.createDirectories(dataFolder);
+        System.setProperty("user.home", dataFolder.toString());
+        System.setProperty("ugs.data.dir", dataFolder.toString());
+    }
+
     private static void reportStartupFailure(Throwable error) {
         StringWriter stackTrace = new StringWriter();
         error.printStackTrace(new PrintWriter(stackTrace));
 
-        Path logFile = Path.of(System.getenv().getOrDefault("LOCALAPPDATA", System.getProperty("user.home")),
-                "UGS VFD Telemetry", "startup-error.log");
+        Path logFile = Boolean.getBoolean("ugs.portable")
+                ? Path.of(System.getProperty("ugs.data.dir", System.getProperty("user.home")), "startup-error.log")
+                : Path.of(System.getenv().getOrDefault("LOCALAPPDATA", System.getProperty("user.home")),
+                        "UGS VFD Telemetry", "startup-error.log");
         try {
             Files.createDirectories(logFile.getParent());
             Files.writeString(logFile,

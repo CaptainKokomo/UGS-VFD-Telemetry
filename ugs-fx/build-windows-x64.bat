@@ -89,4 +89,25 @@ for %%s in ("msi" "exe") do call "%JAVA_HOME%\bin\jpackage" ^
 
 move "target\installer\UGS VFD Telemetry*.exe" "target\installer\UGS-VFD-Telemetry-Setup-%APP_VERSION%-x64.exe"
 move "target\installer\UGS VFD Telemetry*.msi" "target\installer\UGS-VFD-Telemetry-%APP_VERSION%-x64.msi"
+
+:: ----------- PORTABLE PACKAGE -------------------------------------------
+rmdir /s /q target\portable 2>nul
+mkdir target\portable
+
+call "%JAVA_HOME%\bin\jpackage" ^
+  --type app-image ^
+  --dest target\portable ^
+  --input target\installer\input\libs ^
+  --name "UGS VFD Telemetry" ^
+  --main-class com.willwinder.universalgcodesender.fx.Launcher ^
+  --main-jar %MAIN_JAR% ^
+  --resource-dir installer ^
+  --java-options "-XX:MaxRAMPercentage=85.0 -Djavafx.preloader=com.willwinder.universalgcodesender.fx.Preloader -Dugs.portable=true" ^
+  --runtime-image target\java-runtime ^
+  --icon installer\ugs.ico ^
+  --app-version %APP_VERSION% ^
+  --vendor "CaptainKokomo" ^
+  --copyright "UGS contributors and CaptainKokomo"
+
+powershell -NoProfile -Command "Compress-Archive -Path 'target\portable\UGS VFD Telemetry' -DestinationPath 'target\installer\UGS-VFD-Telemetry-Portable-%APP_VERSION%-x64.zip' -Force"
 echo Done.

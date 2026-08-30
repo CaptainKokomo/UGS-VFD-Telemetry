@@ -10,7 +10,7 @@ permissions:
   contents: write
 
 env:
-  APP_VERSION: 0.1.1
+  APP_VERSION: 0.1.2
 
 jobs:
   build-windows-installer:
@@ -39,6 +39,7 @@ jobs:
           path: |
             ugs-fx/target/installer/UGS-VFD-Telemetry-Setup-*.exe
             ugs-fx/target/installer/UGS-VFD-Telemetry-*.msi
+            ugs-fx/target/installer/UGS-VFD-Telemetry-Portable-*.zip
           if-no-files-found: error
 
       - name: Publish repaired Windows installer
@@ -49,8 +50,9 @@ jobs:
           gh release create "v${APP_VERSION}" \
             "ugs-fx/target/installer/UGS-VFD-Telemetry-Setup-${APP_VERSION}-x64.exe" \
             "ugs-fx/target/installer/UGS-VFD-Telemetry-${APP_VERSION}-x64.msi" \
+            "ugs-fx/target/installer/UGS-VFD-Telemetry-Portable-${APP_VERSION}-x64.zip" \
             --repo "$GITHUB_REPOSITORY" \
             --target "$GITHUB_SHA" \
             --title "UGS VFD Telemetry ${APP_VERSION}" \
-            --notes "Windows startup compatibility repair: lightweight splash screen, automatic graphics fallback and visible startup-error reporting." \
+            --notes "Portable Windows build: extract it to any drive and run UGS VFD Telemetry.exe. The bundled runtime, settings and VFD job logs remain inside that folder; no installation is required." \
             --prerelease

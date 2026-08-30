@@ -51,7 +51,8 @@ public final class VfdJobLogger implements AutoCloseable {
         minFrequency = Double.POSITIVE_INFINITY;
         maxFrequency = Double.NEGATIVE_INFINITY;
 
-        Path root = Path.of(System.getProperty("user.home"), "Documents", "UGS VFD Telemetry");
+        Path root = Path.of(System.getProperty("ugs.data.dir",
+                Path.of(System.getProperty("user.home"), "Documents", "UGS VFD Telemetry").toString()));
         jobFolder = root.resolve(FOLDER_FORMAT.format(started));
         Files.createDirectories(jobFolder);
         samplesWriter = Files.newBufferedWriter(jobFolder.resolve("samples.csv"), StandardCharsets.UTF_8);
