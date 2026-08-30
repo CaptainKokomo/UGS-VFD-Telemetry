@@ -6,6 +6,12 @@ on:
       - vfd-telemetry
   workflow_dispatch:
 
+permissions:
+  contents: write
+
+env:
+  APP_VERSION: 0.1.1
+
 jobs:
   build-windows-installer:
     runs-on: windows-latest
@@ -16,15 +22,15 @@ jobs:
 
       - name: Compile application
         shell: bash
-        run: ./mvnw clean install -B -DskipTests=true -Drevision=0.1.0 -Dchangelist=
+        run: ./mvnw clean install -B -DskipTests=true -Drevision=${APP_VERSION} -Dchangelist=
 
       - name: Test VFD integration
         shell: bash
-        run: ./mvnw test -B -pl ugs-fx -Drevision=0.1.0 -Dchangelist=
+        run: ./mvnw test -B -pl ugs-fx -Drevision=${APP_VERSION} -Dchangelist=
 
       - name: Package Windows installer
         shell: bash
-        run: ./mvnw package -B -pl ugs-fx -P fx-build-windows -DskipTests=true -Drevision=0.1.0 -Dchangelist=
+        run: ./mvnw package -B -pl ugs-fx -P fx-build-windows -DskipTests=true -Drevision=${APP_VERSION} -Dchangelist=
 
       - name: Upload Windows installers
         uses: actions/upload-artifact@v4
@@ -34,3 +40,17 @@ jobs:
             ugs-fx/target/installer/UGS-VFD-Telemetry-Setup-*.exe
             ugs-fx/target/installer/UGS-VFD-Telemetry-*.msi
           if-no-files-found: error
+
+      - name: Publish repaired Windows installer
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "v${APP_VERSION}" \
+            "ugs-fx/target/installer/UGS-VFD-Telemetry-Setup-${APP_VERSION}-x64.exe" \
+            "ugs-fx/target/installer/UGS-VFD-Telemetry-${APP_VERSION}-x64.msi" \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$GITHUB_SHA" \
+            --title "UGS VFD Telemetry ${APP_VERSION}" \
+            --notes "Windows startup compatibility repair: lightweight splash screen, automatic graphics fallback and visible startup-error reporting." \
+            --prerelease

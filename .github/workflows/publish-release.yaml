@@ -1,9 +1,6 @@
 name: Publish Windows Download
 
 on:
-  push:
-    branches:
-      - vfd-telemetry
   workflow_dispatch:
 
 permissions:
