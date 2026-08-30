@@ -72,7 +72,7 @@ for %%s in ("msi" "exe") do call "%JAVA_HOME%\bin\jpackage" ^
   --type %%s ^
   --dest target\installer ^
   --input target\installer\input\libs ^
-  --name "Universal G-code Sender" ^
+  --name "UGS VFD Telemetry" ^
   --main-class com.willwinder.universalgcodesender.fx.Launcher ^
   --main-jar %MAIN_JAR% ^
   --resource-dir installer ^
@@ -82,11 +82,11 @@ for %%s in ("msi" "exe") do call "%JAVA_HOME%\bin\jpackage" ^
   --app-version %APP_VERSION% ^
   --win-shortcut ^
   --win-menu ^
-  --vendor "Universal G-code Sender" ^
-  --copyright "Joacim Breiler" ^
+  --vendor "CaptainKokomo" ^
+  --copyright "UGS contributors and CaptainKokomo" ^
   --license-file ..\COPYING ^
-  --about-url https://universalgcodesender.com/
+  --about-url https://github.com/CaptainKokomo/UGS-VFD-Telemetry
 
-move "target\installer\Universal G-code Sender*.exe" "target\installer\ugs-%APP_VERSION%-x64.exe"
-move "target\installer\Universal G-code Sender*.msi" "target\installer\ugs-%APP_VERSION%-x64.msi"
+move "target\installer\UGS VFD Telemetry*.exe" "target\installer\UGS-VFD-Telemetry-Setup-%APP_VERSION%-x64.exe"
+move "target\installer\UGS VFD Telemetry*.msi" "target\installer\UGS-VFD-Telemetry-%APP_VERSION%-x64.msi"
 echo Done.

@@ -1,0 +1,94 @@
+.vfd-pane {
+    -fx-background-color: #f4f6f8;
+    -fx-border-color: -ugs-border-color;
+    -fx-border-width: 0 0 0 1;
+}
+
+.vfd-scroll,
+.vfd-scroll > .viewport {
+    -fx-background-color: transparent;
+}
+
+.vfd-title {
+    -fx-font-size: 1.45em;
+    -fx-font-weight: bold;
+    -fx-text-fill: #252a30;
+}
+
+.vfd-state {
+    -fx-font-size: 0.82em;
+    -fx-font-weight: bold;
+    -fx-padding: 4 8 4 8;
+    -fx-background-radius: 10;
+}
+
+.vfd-state-online {
+    -fx-background-color: #d8f2df;
+    -fx-text-fill: #176c2d;
+}
+
+.vfd-state-connecting {
+    -fx-background-color: #dceaf7;
+    -fx-text-fill: #245e86;
+}
+
+.vfd-state-offline {
+    -fx-background-color: #e4e7ea;
+    -fx-text-fill: #5c6268;
+}
+
+.vfd-state-error {
+    -fx-background-color: #ffd9d6;
+    -fx-text-fill: #a42820;
+}
+
+.vfd-detail {
+    -fx-text-fill: #606870;
+}
+
+.vfd-tile {
+    -fx-background-color: white;
+    -fx-border-color: #d9dee3;
+    -fx-border-radius: 7;
+    -fx-background-radius: 7;
+    -fx-padding: 10;
+}
+
+.vfd-tile-title,
+.vfd-section-title,
+.vfd-field-label {
+    -fx-font-size: 0.78em;
+    -fx-font-weight: bold;
+    -fx-text-fill: #69727b;
+}
+
+.vfd-tile-value {
+    -fx-font-size: 2em;
+    -fx-font-weight: bold;
+    -fx-text-fill: #20262c;
+}
+
+.vfd-tile-unit {
+    -fx-font-size: 0.9em;
+    -fx-text-fill: #69727b;
+}
+
+.vfd-value-ok {
+    -fx-text-fill: #176c2d;
+}
+
+.vfd-value-fault {
+    -fx-text-fill: #b0261e;
+}
+
+.chart {
+    -fx-background-color: white;
+    -fx-border-color: #d9dee3;
+    -fx-border-radius: 7;
+    -fx-background-radius: 7;
+}
+
+.chart-series-line {
+    -fx-stroke: #4f9eb0;
+    -fx-stroke-width: 2px;
+}

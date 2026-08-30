@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.0",
+  "device_family": "HS350",
+  "target_model": "SLNEE H350G1 / SLNEE350-2.2G1",
+  "protocol": "Modbus RTU",
+  "default_serial": {"slave_id": 1, "baudrate": 9600, "format": "8N1"},
+  "registers": [
+    {"address":"0x2100","name":"current_fault_primary","unit":"code","scale":1.0},
+    {"address":"0x2101","name":"command_state_bits","unit":"bitfield","scale":1.0},
+    {"address":"0x2102","name":"setting_frequency","unit":"Hz","scale":0.01},
+    {"address":"0x2103","name":"output_frequency","unit":"Hz","scale":0.01},
+    {"address":"0x2104","name":"output_current","unit":"A","scale":0.1},
+    {"address":"0x2105","name":"dc_bus_voltage","unit":"V","scale":0.1},
+    {"address":"0x2106","name":"output_voltage","unit":"V","scale":0.1},
+    {"address":"0x2107","name":"analog_input_avi","unit":"V","scale":0.01},
+    {"address":"0x2108","name":"analog_input_aci","unit":"mA","scale":0.01},
+    {"address":"0x2109","name":"current_count","unit":"count","scale":1.0},
+    {"address":"0x210A","name":"motor_speed","unit":"raw","scale":1.0},
+    {"address":"0x210B","name":"analog_output_ao","unit":"V","scale":0.01},
+    {"address":"0x210C","name":"reserved_210c","unit":"raw","scale":1.0},
+    {"address":"0x210D","name":"reserved_210d","unit":"raw","scale":1.0},
+    {"address":"0x210E","name":"pid_feedback","unit":"configured","scale":0.01},
+    {"address":"0x210F","name":"pid_set_value","unit":"configured","scale":0.01},
+    {"address":"0x2110","name":"reserved_2110","unit":"raw","scale":1.0},
+    {"address":"0x2111","name":"reserved_2111","unit":"raw","scale":1.0},
+    {"address":"0x2112","name":"current_fault_secondary","unit":"code","scale":1.0},
+    {"address":"0x2113","name":"current_timing_value","unit":"s","scale":1.0},
+    {"address":"0x2114","name":"input_terminal_status","unit":"bitfield","scale":1.0},
+    {"address":"0x2115","name":"output_terminal_status","unit":"bitfield","scale":1.0},
+    {"address":"0x2116","name":"running_status_bits","unit":"bitfield","scale":1.0}
+  ]
+}

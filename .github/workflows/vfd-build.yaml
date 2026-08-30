@@ -1,0 +1,32 @@
+name: Build UGS VFD Telemetry
+
+on:
+  push:
+    branches:
+      - vfd-telemetry
+  workflow_dispatch:
+
+jobs:
+  build-windows-installer:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/setup-java-maven
+
+      - name: Compile and test
+        shell: bash
+        run: ./mvnw clean install -B -Drevision=0.1.0 -Dchangelist=
+
+      - name: Package Windows installer
+        shell: bash
+        run: ./mvnw package -B -pl ugs-fx -P fx-build-windows -DskipTests=true -Drevision=0.1.0 -Dchangelist=
+
+      - name: Upload Windows installers
+        uses: actions/upload-artifact@v4
+        with:
+          name: UGS-VFD-Telemetry-Windows
+          path: |
+            ugs-fx/target/installer/UGS-VFD-Telemetry-Setup-*.exe
+            ugs-fx/target/installer/UGS-VFD-Telemetry-*.msi
+          if-no-files-found: error

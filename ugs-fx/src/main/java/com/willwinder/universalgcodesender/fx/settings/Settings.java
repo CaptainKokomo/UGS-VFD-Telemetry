@@ -36,6 +36,7 @@ public class Settings {
     private static final String WINDOW_DIVIDER_CONTENT = "window.dividerContent";
     private static final String WINDOW_DIVIDER_INSPECTOR = "window.dividerInspector";
     private static final String WINDOW_DIVIDER_INSPECTOR_SECTIONS = "window.dividerInspectorSections";
+    private static final String WINDOW_DIVIDER_VFD = "window.dividerVfd";
     private static final String PENDANT_AUTOSTART = "pendant.autostart";
     private static final String SHOW_TOOLBAR_TEXT = "window.showToolBarText";
     private static final String SHOW_MACHINE_POSITION = "window.showMachinePosition";
@@ -53,6 +54,7 @@ public class Settings {
     private final DoubleProperty windowDividerContent = new SimpleDoubleProperty(loadDouble(WINDOW_DIVIDER_CONTENT, 0.3));
     private final DoubleProperty windowDividerInspector = new SimpleDoubleProperty(loadDouble(WINDOW_DIVIDER_INSPECTOR, 0.78));
     private final DoubleProperty windowDividerInspectorSections = new SimpleDoubleProperty(loadDouble(WINDOW_DIVIDER_INSPECTOR_SECTIONS, 0.6));
+    private final DoubleProperty windowDividerVfd = new SimpleDoubleProperty(loadDouble(WINDOW_DIVIDER_VFD, 0.68));
     private final BooleanProperty pendantAutostart = new SimpleBooleanProperty(loadBoolean(PENDANT_AUTOSTART, false));
     private final BooleanProperty showToolbarText = new SimpleBooleanProperty(loadBoolean(SHOW_TOOLBAR_TEXT, false));
     private final BooleanProperty showMachinePosition = new SimpleBooleanProperty(loadBoolean(SHOW_MACHINE_POSITION, false));
@@ -68,6 +70,7 @@ public class Settings {
         windowDividerContent.addListener((obs, oldVal, newVal) -> saveDouble(WINDOW_DIVIDER_CONTENT, newVal.doubleValue()));
         windowDividerInspector.addListener((obs, oldVal, newVal) -> saveDouble(WINDOW_DIVIDER_INSPECTOR, newVal.doubleValue()));
         windowDividerInspectorSections.addListener((obs, oldVal, newVal) -> saveDouble(WINDOW_DIVIDER_INSPECTOR_SECTIONS, newVal.doubleValue()));
+        windowDividerVfd.addListener((obs, oldVal, newVal) -> saveDouble(WINDOW_DIVIDER_VFD, newVal.doubleValue()));
         pendantAutostart.addListener((obs, oldVal, newVal) -> saveBoolean(PENDANT_AUTOSTART, newVal));
         showToolbarText.addListener((obs, oldVal, newVal) -> saveBoolean(SHOW_TOOLBAR_TEXT, newVal));
         showMachinePosition.addListener((obs, oldVal, newVal) -> saveBoolean(SHOW_MACHINE_POSITION, newVal));
@@ -113,6 +116,10 @@ public class Settings {
 
     public DoubleProperty windowDividerInspectorSectionsProperty() {
         return windowDividerInspectorSections;
+    }
+
+    public DoubleProperty windowDividerVfdProperty() {
+        return windowDividerVfd;
     }
 
     public BooleanProperty pendantAutostartProperty() {

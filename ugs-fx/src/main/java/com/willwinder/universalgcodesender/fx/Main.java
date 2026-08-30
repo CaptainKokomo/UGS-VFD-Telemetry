@@ -27,6 +27,7 @@ import com.willwinder.universalgcodesender.fx.component.dro.MachineStatusPane;
 import com.willwinder.universalgcodesender.fx.component.jog.JogPane;
 import com.willwinder.universalgcodesender.fx.component.visualizer.Visualizer;
 import com.willwinder.universalgcodesender.fx.component.designer.InspectorPane;
+import com.willwinder.universalgcodesender.fx.component.vfd.VfdTelemetryPane;
 import com.willwinder.universalgcodesender.fx.model.UgsdWorkspaceContext;
 import com.willwinder.universalgcodesender.services.LookupService;
 import com.willwinder.universalgcodesender.fx.helper.FontRegistry;
@@ -38,6 +39,7 @@ import com.willwinder.universalgcodesender.fx.service.MacroActionService;
 import com.willwinder.universalgcodesender.fx.service.ShortcutService;
 import com.willwinder.universalgcodesender.fx.service.WorkspaceFileLoader;
 import com.willwinder.universalgcodesender.fx.service.WorkspaceManager;
+import com.willwinder.universalgcodesender.fx.service.vfd.VfdTelemetryService;
 import com.willwinder.universalgcodesender.fx.settings.Settings;
 import com.willwinder.universalgcodesender.i18n.Localization;
 import com.willwinder.universalgcodesender.model.GUIBackend;
@@ -69,7 +71,9 @@ public class Main extends Application {
     private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
     private SplitPane motionSplitPane;
     private SplitPane contentSplitPane;
+    private SplitPane workspaceSplitPane;
     private StackPane contentPanel;
+    private VfdTelemetryPane vfdTelemetryPane;
 
     @Override
     public void init() throws Exception {
@@ -106,6 +110,7 @@ public class Main extends Application {
         ToolBarMenu toolBarMenu = new ToolBarMenu();
         createLeftPane();
         createContentPanel();
+        createWorkspacePane();
         createContentPane();
         VBox.setVgrow(contentSplitPane, Priority.ALWAYS);
 
@@ -119,7 +124,7 @@ public class Main extends Application {
         scene.getStylesheets().add(Objects.requireNonNull(Main.class.getResource("/styles/menu-bar.css")).toExternalForm());
         root.getChildren().addAll(mainMenuBar, toolBarMenu, contentSplitPane);
 
-        primaryStage.setTitle("Universal G-code Sender - " + Version.getVersion());
+        primaryStage.setTitle("UGS VFD Telemetry - " + Version.getVersion());
         SvgLoader.loadIcon("icons/ugs.svg", 128).ifPresent(icon -> primaryStage.getIcons().add(icon));
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -170,10 +175,13 @@ public class Main extends Application {
                 SplitPaneDividerPersistence.install(motionSplitPane, 0, Settings.getInstance().windowDividerLeftProperty());
                 SplitPaneDividerPersistence.install(contentSplitPane, 0, Settings.getInstance().windowDividerContentProperty());
                 SplitPaneDividerPersistence.install(contentSplitPane, 1, Settings.getInstance().windowDividerInspectorProperty());
+                SplitPaneDividerPersistence.install(workspaceSplitPane, 0, Settings.getInstance().windowDividerVfdProperty());
             });
         });
 
         primaryStage.setOnCloseRequest(event -> {
+            vfdTelemetryPane.shutdown();
+            VfdTelemetryService.getInstance().close();
             SettingsFactory.saveSettings();
             Platform.exit();
             System.exit(0);
@@ -189,12 +197,20 @@ public class Main extends Application {
         StackPane.setAlignment(drawerPane, Pos.BOTTOM_RIGHT);
     }
 
+    private void createWorkspacePane() {
+        vfdTelemetryPane = new VfdTelemetryPane();
+        workspaceSplitPane = new SplitPane(contentPanel, vfdTelemetryPane);
+        workspaceSplitPane.setOrientation(Orientation.HORIZONTAL);
+        workspaceSplitPane.setMinWidth(500);
+        SplitPane.setResizableWithParent(vfdTelemetryPane, false);
+    }
+
 
     private void createContentPane() {
         contentSplitPane = new SplitPane();
         contentSplitPane.setMinWidth(200);
         contentSplitPane.setOrientation(Orientation.HORIZONTAL);
-        contentSplitPane.getItems().addAll(motionSplitPane, contentPanel);
+        contentSplitPane.getItems().addAll(motionSplitPane, workspaceSplitPane);
         SplitPane.setResizableWithParent(contentSplitPane, false);
         new InspectorPane(contentSplitPane);
     }
