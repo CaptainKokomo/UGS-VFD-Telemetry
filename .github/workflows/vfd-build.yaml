@@ -14,9 +14,13 @@ jobs:
 
       - uses: ./.github/actions/setup-java-maven
 
-      - name: Compile and test
+      - name: Compile application
         shell: bash
-        run: ./mvnw clean install -B -Drevision=0.1.0 -Dchangelist=
+        run: ./mvnw clean install -B -DskipTests=true -Drevision=0.1.0 -Dchangelist=
+
+      - name: Test VFD integration
+        shell: bash
+        run: ./mvnw test -B -pl ugs-fx -Drevision=0.1.0 -Dchangelist=
 
       - name: Package Windows installer
         shell: bash
