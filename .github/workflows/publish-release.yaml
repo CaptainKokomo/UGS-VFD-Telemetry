@@ -1,0 +1,29 @@
+name: Publish Windows Download
+
+on:
+  push:
+    branches:
+      - vfd-telemetry
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Download verified Windows build
+        run: gh run download 33311139747 --repo "$GITHUB_REPOSITORY" --name UGS-VFD-Telemetry-Windows
+
+      - name: Publish release download
+        shell: bash
+        run: |
+          if gh release view v0.1.0 --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload v0.1.0 UGS-VFD-Telemetry-Setup-0.1.0-x64.exe UGS-VFD-Telemetry-0.1.0-x64.msi --clobber --repo "$GITHUB_REPOSITORY"
+          else
+            gh release create v0.1.0 UGS-VFD-Telemetry-Setup-0.1.0-x64.exe UGS-VFD-Telemetry-0.1.0-x64.msi --repo "$GITHUB_REPOSITORY" --target vfd-telemetry --title "UGS VFD Telemetry 0.1.0" --notes "First integrated Windows build with UGS-FX CNC control, RS485/Modbus VFD telemetry, live fault display and automatic job logging." --prerelease
+          fi
