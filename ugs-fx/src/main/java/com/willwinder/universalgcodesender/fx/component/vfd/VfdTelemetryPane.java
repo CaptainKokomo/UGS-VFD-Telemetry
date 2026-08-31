@@ -260,20 +260,25 @@ public class VfdTelemetryPane extends BorderPane {
 
     private void refreshPorts() {
         String selectedName = portBox.getValue() == null ? VfdSettings.getPort() : portBox.getValue().systemName();
+        BackendAPI backend = LookupService.lookup(BackendAPI.class);
+        String cncPort = backend.getSettings().getPort();
+        if (selectedName.equalsIgnoreCase(cncPort)) {
+            selectedName = "";
+            VfdSettings.setPort("");
+        }
+        String desiredPort = selectedName;
         List<VfdTelemetryService.PortInfo> ports = VfdTelemetryService.listPorts();
         portBox.setItems(FXCollections.observableArrayList(ports));
         ports.stream()
-                .filter(port -> port.systemName().equalsIgnoreCase(selectedName))
+                .filter(port -> port.systemName().equalsIgnoreCase(desiredPort))
                 .findFirst()
-                .or(() -> ports.size() == 1 ? ports.stream().findFirst() : java.util.Optional.empty())
                 .ifPresent(portBox::setValue);
 
         if (ports.isEmpty()) {
             detailLabel.setText("No USB serial adaptor detected");
-        } else if (portBox.getValue() != null
-                && service.getState() == VfdTelemetryService.State.DISCONNECTED
-                && (!VfdSettings.getPort().isBlank() || ports.size() == 1)) {
-            connect();
+        } else if (ports.size() == 1 && ports.get(0).systemName().equalsIgnoreCase(cncPort)) {
+            portBox.setValue(null);
+            detailLabel.setText(cncPort + " is the CNC controller. USB-RS485 adaptor not detected.");
         }
     }
 
@@ -281,6 +286,12 @@ public class VfdTelemetryPane extends BorderPane {
         VfdTelemetryService.PortInfo selected = portBox.getValue();
         if (selected == null) {
             showError("No serial port selected", "Plug in the USB-to-RS485 adaptor and press Refresh.");
+            return;
+        }
+        BackendAPI backend = LookupService.lookup(BackendAPI.class);
+        if (selected.systemName().equalsIgnoreCase(backend.getSettings().getPort())) {
+            showError(selected.systemName() + " is assigned to the CNC controller",
+                    "Select the separate USB-to-RS485 adaptor port.");
             return;
         }
         service.connect(selected.systemName(), baudBox.getValue(), slaveSpinner.getValue());

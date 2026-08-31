@@ -77,7 +77,6 @@ public final class VfdTelemetryService implements AutoCloseable {
         disconnect();
         portName = selectedPort;
         slaveId = selectedSlaveId;
-        VfdSettings.setPort(selectedPort);
         VfdSettings.setBaud(baud);
         VfdSettings.setSlaveId(selectedSlaveId);
         publishState(State.CONNECTING, "Opening " + selectedPort);
@@ -130,6 +129,7 @@ public final class VfdTelemetryService implements AutoCloseable {
                     VfdTelemetrySnapshot.START_REGISTER,
                     VfdTelemetrySnapshot.REGISTER_COUNT);
             VfdTelemetrySnapshot snapshot = VfdTelemetrySnapshot.fromRegisters(registers);
+            VfdSettings.setPort(portName);
             publishState(State.CONNECTED, portName + " · slave " + slaveId);
             listeners.forEach(listener -> listener.onSample(snapshot));
         } catch (IOException exception) {
