@@ -124,16 +124,37 @@ public final class VfdTelemetryService implements AutoCloseable {
             return;
         }
         try {
-            int[] registers = activeClient.readHoldingRegisters(
-                    slaveId,
-                    VfdTelemetrySnapshot.START_REGISTER,
-                    VfdTelemetrySnapshot.REGISTER_COUNT);
+            int[] registers = new int[VfdTelemetrySnapshot.REGISTER_COUNT];
+
+            // The HS350 manual demonstrates short reads. Some controller variants silently
+            // discard the previous 23-register request, so poll only the documented values.
+            readRegister(activeClient, registers, 0x2102); // Set frequency
+            readRegister(activeClient, registers, 0x2103); // Output frequency
+            readRegister(activeClient, registers, 0x2104); // Output current
+            readRegister(activeClient, registers, 0x2105); // DC bus voltage
+            readRegister(activeClient, registers, 0x2106); // Output voltage
+            readRegister(activeClient, registers, 0x2100); // Primary fault
+            readRegister(activeClient, registers, 0x2101); // Command state
+            readRegister(activeClient, registers, 0x2112); // Secondary fault
+            readRegister(activeClient, registers, 0x2116); // Running status
+
             VfdTelemetrySnapshot snapshot = VfdTelemetrySnapshot.fromRegisters(registers);
             VfdSettings.setPort(portName);
             publishState(State.CONNECTED, portName + " · slave " + slaveId);
             listeners.forEach(listener -> listener.onSample(snapshot));
         } catch (IOException exception) {
             publishState(State.NO_RESPONSE, exception.getMessage());
+        }
+    }
+
+    private void readRegister(ModbusRtuClient activeClient, int[] registers, int address) throws IOException {
+        int offset = address - VfdTelemetrySnapshot.START_REGISTER;
+        registers[offset] = activeClient.readHoldingRegisters(slaveId, address, 1)[0];
+        try {
+            Thread.sleep(8);
+        } catch (InterruptedException exception) {
+            Thread.currentThread().interrupt();
+            throw new IOException("VFD polling interrupted", exception);
         }
     }
 
